@@ -1,0 +1,1 @@
+# JobHunter nodes package

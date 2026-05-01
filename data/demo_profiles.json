@@ -1,0 +1,45 @@
+{
+  "profiles": {
+    "alex_demo": {
+      "name": "Alex Chen",
+      "base_skills": ["Python", "React", "AWS", "Docker", "PostgreSQL", "REST APIs", "Git", "CI/CD", "System Design", "Microservices"],
+      "target_role": "Senior Software Engineer",
+      "years_experience": 5
+    },
+    "jordan_demo": {
+      "name": "Jordan Rivera",
+      "base_skills": ["JavaScript", "HTML", "CSS", "React", "Node.js", "Git", "REST APIs"],
+      "target_role": "Frontend Developer",
+      "years_experience": 2
+    },
+    "sam_demo": {
+      "name": "Sam Patel",
+      "base_skills": ["Java", "Spring Boot", "Kubernetes", "AWS", "MySQL", "Kafka", "Terraform", "Python"],
+      "target_role": "Backend Engineer",
+      "years_experience": 4
+    }
+  },
+  "default_strategies": {
+    "alex_demo": {
+      "target_seniority": "Senior",
+      "focus_areas": ["Python", "React", "AWS"],
+      "prep_recommendations": [],
+      "locked_changes": [],
+      "positive_events_since_last_change": 0
+    },
+    "jordan_demo": {
+      "target_seniority": "Mid-Level",
+      "focus_areas": ["JavaScript", "React"],
+      "prep_recommendations": [],
+      "locked_changes": [],
+      "positive_events_since_last_change": 0
+    },
+    "sam_demo": {
+      "target_seniority": "Senior",
+      "focus_areas": ["Java", "Spring Boot", "AWS"],
+      "prep_recommendations": [],
+      "locked_changes": [],
+      "positive_events_since_last_change": 0
+    }
+  }
+}

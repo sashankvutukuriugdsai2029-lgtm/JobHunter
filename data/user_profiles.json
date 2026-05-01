@@ -1,0 +1,52 @@
+{
+  "profiles": {
+    "alex_demo": {
+      "name": "Alex Chen",
+      "base_skills": [
+        "Python",
+        "React",
+        "AWS",
+        "Docker",
+        "PostgreSQL",
+        "REST APIs",
+        "Git",
+        "CI/CD",
+        "System Design",
+        "Microservices",
+        "Docker"
+      ],
+      "target_role": "Senior Software Engineer",
+      "years_experience": 0,
+      "education": [
+        {
+          "school": "uyiguyi",
+          "degree": "iftyi"
+        },
+        {
+          "school": "dzfbvd",
+          "degree": "asdgvadv"
+        }
+      ],
+      "equal_employment": {
+        "gender": "Male",
+        "veteran": "Decline to Self-Identify",
+        "disability": "No, I don't have a disability"
+      },
+      "target_salary": "",
+      "notes": ""
+    }
+  },
+  "default_strategies": {
+    "alex_demo": {
+      "target_seniority": "Senior",
+      "focus_areas": [
+        "Python",
+        "React",
+        "AWS"
+      ],
+      "prep_recommendations": [],
+      "locked_changes": [],
+      "positive_events_since_last_change": 0
+    }
+  }
+}
