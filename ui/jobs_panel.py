@@ -102,13 +102,18 @@ def render_jobs_panel(state: dict):
         logo_letter = company_name[0] if company_name else "U"
         
         # Details
-        location = "Boston, MA" # Mock location since we don't have it in CSV
-        work_type = job.get('work_type', 'Hybrid')
+        location = job.get("location", "Remote")
+        if str(location) == "nan": location = "Remote"
+        
+        work_type = job.get('work_type', 'Full-time')
         if type(work_type) is list:
-            work_type = work_type[0] if work_type else 'Hybrid'
+            work_type = work_type[0] if work_type else 'Full-time'
+        if str(work_type) == "nan": work_type = "Full-time"
         work_type = work_type.title()
         
-        pay = "$25/hr - $30/hr" # Mock pay
+        pay = job.get("salary", "Not listed")
+        if str(pay) == "nan" or not pay: pay = "Not listed"
+        
         job_type = "Full-time"
         seniority = job.get('seniority', 'New Grad')
 
@@ -126,7 +131,7 @@ def render_jobs_panel(state: dict):
             match_box_html = f'<div style="background: #EAFCF5; border-radius: 12px; padding: 24px; width: 320px; flex-shrink: 0;"><div style="font-size: 48px; font-weight: 800; color: #1A1A1A;">{int(score)}%</div></div>'
 
         # Build Main Card HTML (No newlines to prevent markdown parsing issues)
-        card_html = f'<div style="background: #FFFFFF; border-radius: 16px; padding: 24px; border: 1px solid #EAEAEA; margin-bottom: 24px;"><div style="display: flex; gap: 32px;"><div style="flex: 1;"><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;"><div style="width: 40px; height: 40px; background: #EAFCF5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #10B981; font-size: 20px;">{logo_letter}</div><div style="font-size: 16px; font-weight: 600; color: #1A1A1A;">{company_name}<span style="font-weight: 400; color: #1A1A1A;"> · Reposted 4 days ago</span></div></div><div style="font-size: 24px; font-weight: 700; color: #1A1A1A; margin-bottom: 24px; font-family: -apple-system, system-ui, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">{job.get("title", "Untitled Role")}</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; font-size: 15px; color: #1A1A1A; font-weight: 500;"><div><span style="margin-right: 8px;">📍</span>{location}</div><div><span style="margin-right: 8px;">⏱️</span>{job_type}</div><div><span style="margin-right: 8px;">🏠</span>{work_type}</div><div><span style="margin-right: 8px;">🎓</span>{seniority}</div><div><span style="margin-right: 8px;">💰</span>{pay}</div></div><div style="font-size: 15px; color: #1A1A1A; line-height: 1.5; margin-bottom: 24px;">{job.get("description", "No description available.")[:350]}...</div><div style="margin-bottom: 16px;">{skills_html}</div><div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #F5F5F5; border-radius: 8px; font-size: 13px; color: #1A1A1A; font-weight: 500;"><span>🚫</span> No H1B <span>❓</span></div></div>{match_box_html}</div></div>'
+        card_html = f'<div style="background: #FFFFFF; border-radius: 16px; padding: 24px; border: 1px solid #EAEAEA; margin-bottom: 24px;"><div style="display: flex; gap: 32px;"><div style="flex: 1;"><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;"><div style="width: 40px; height: 40px; background: #EAFCF5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #10B981; font-size: 20px;">{logo_letter}</div><div style="font-size: 16px; font-weight: 600; color: #1A1A1A;">{company_name}<span style="font-weight: 400; color: #1A1A1A;"> · Reposted 4 days ago</span></div></div><div style="font-size: 24px; font-weight: 700; color: #1A1A1A; margin-bottom: 24px; font-family: -apple-system, system-ui, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">{job.get("title", "Untitled Role")}</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; font-size: 15px; color: #1A1A1A; font-weight: 500;"><div><span style="margin-right: 8px;">📍</span>{location}</div><div><span style="margin-right: 8px;">⏱️</span>{job_type}</div><div><span style="margin-right: 8px;">🏠</span>{work_type}</div><div><span style="margin-right: 8px;">🎓</span>{seniority}</div><div><span style="margin-right: 8px;">💰</span>{pay}</div></div><div style="font-size: 15px; color: #1A1A1A; line-height: 1.5; margin-bottom: 24px;">{job.get("description", "No description available.")[:350]}...</div><div style="margin-bottom: 16px;">{skills_html}</div></div>{match_box_html}</div></div>'
 
         st.markdown(card_html, unsafe_allow_html=True)
 

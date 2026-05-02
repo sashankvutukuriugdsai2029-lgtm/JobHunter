@@ -188,7 +188,8 @@ def _llm_extract_profile(
             "Return JSON only (no prose) with keys:\n"
             "name (string), target_role (string), years_experience (int),\n"
             "base_skills (array of strings), preferred_job_types (array of strings),\n"
-            "target_salary (string).\n"
+            "target_salary (string), education (array of objects with 'school' and 'degree'),\n"
+            "work_experience (array of objects with 'title', 'company', 'description').\n"
             "Limit base_skills to 20 concrete technical/professional skills.\n\n"
             f"Fallback name: {fallback_name}\n"
             f"Fallback role: {fallback_role}\n"
@@ -236,7 +237,7 @@ def create_or_update_user_profile(
     gemini_api_key: str = "",
 ) -> tuple[str, dict[str, Any], dict[str, Any], list[str]]:
     warnings: list[str] = []
-    effective_api_key = (gemini_api_key or os.environ.get("GOOGLE_API_KEY", "")).strip()
+    effective_api_key = (gemini_api_key or os.environ.get("OPENROUTER_API_KEY", "")).strip()
 
     extracted_docs: list[str] = []
     for uploaded in uploaded_files:
@@ -274,6 +275,9 @@ def create_or_update_user_profile(
     except Exception:
         final_years = years_experience
 
+    final_education = llm_profile.get("education", []) if llm_profile else []
+    final_work = llm_profile.get("work_experience", []) if llm_profile else []
+
     salary_fallback = target_salary.strip() or _extract_salary_keyword(combined_context)
 
     profile = {
@@ -282,6 +286,8 @@ def create_or_update_user_profile(
         "target_role": final_role or target_role.strip(),
         "years_experience": max(0, final_years),
         "target_salary": final_salary or salary_fallback,
+        "education": final_education,
+        "work_experience": final_work,
         "notes": additional_notes.strip(),
     }
 
@@ -335,3 +341,23 @@ def save_profile_edits(profile_key: str, updated_profile: dict[str, Any]):
 
     with open(USER_PROFILES_PATH, "w", encoding="utf-8") as handle:
         json.dump(user_store, handle, indent=2)
+
+
+def parse_cv_to_dict(uploaded_file: Any, api_key: str = "") -> dict[str, Any] | None:
+    """Parse an uploaded CV and return the extracted profile dictionary."""
+    text, warning = _extract_upload_text(uploaded_file)
+    if not text.strip():
+        return None
+        
+    effective_api_key = (api_key or os.environ.get("OPENROUTER_API_KEY", "")).strip()
+    if not effective_api_key:
+        return None
+        
+    return _llm_extract_profile(
+        raw_context=text.strip()[:8000],
+        fallback_name="",
+        fallback_role="",
+        fallback_years=0,
+        fallback_salary="",
+        api_key=effective_api_key
+    )

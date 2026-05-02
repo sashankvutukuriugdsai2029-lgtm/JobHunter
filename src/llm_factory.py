@@ -1,19 +1,20 @@
 """
 Centralized LLM Factory for Google Gemini via LangChain.
-Uses GOOGLE_API_KEY from the .env file.
+Uses OPENROUTER_API_KEY from the .env file.
 """
 
 import os
 
-from langchain_google_genai import ChatGoogleGenerativeAI
-
+from langchain_openai import ChatOpenAI
 
 def get_llm(temperature: float = 0.2):
-    """Return configured ChatGoogleGenerativeAI instance for Gemini."""
-    api_key = os.environ.get("GOOGLE_API_KEY", "")
+    """Return configured ChatOpenAI instance for OpenRouter."""
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
 
-    return ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
-        google_api_key=api_key,
+    return ChatOpenAI(
+        model="inclusionai/ling-2.6-1t:free",
+        openai_api_key=api_key,
+        openai_api_base="https://openrouter.ai/api/v1",
         temperature=temperature,
+        max_retries=1,
     )

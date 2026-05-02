@@ -1,4 +1,4 @@
-﻿"""
+"""
 Utility helpers for JobHunter - scoring, keyword overlap, KPI computation.
 """
 
@@ -28,9 +28,21 @@ def compute_skill_overlap(job_skills: List[str], candidate_skills: List[str]) ->
 
 def apply_seniority_penalty(score: float, job_seniority: str, target_seniority: str) -> float:
     """Drop score when job seniority does not match strategy target."""
-    if job_seniority.strip().lower() != target_seniority.strip().lower():
-        return round(score * 0.1, 1)
-    return score
+    job_sen = job_seniority.strip().lower()
+    target_sen = target_seniority.strip().lower()
+    
+    if job_sen == target_sen:
+        return score
+        
+    # Map common dataset labels to target tiers
+    if target_sen == "junior" and job_sen in ["entry level", "internship", "associate"]:
+        return score
+    if target_sen == "mid-level" and job_sen in ["associate", "mid-senior level", "mid level"]:
+        return score
+    if target_sen == "senior" and job_sen in ["mid-senior level", "director", "executive", "staff"]:
+        return score
+
+    return round(score * 0.1, 1)
 
 
 def _safe_days_between(start_date: str, end_date: str) -> int | None:

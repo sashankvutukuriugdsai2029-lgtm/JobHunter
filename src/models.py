@@ -152,6 +152,20 @@ class CompanySignals(BaseModel):
     glassdoor_rating: Optional[float] = None
 
 
+class InterviewEvent(BaseModel):
+    """A scheduled interview event for calendar tracking."""
+    event_id: str = Field(default_factory=lambda: str(uuid.uuid4())[:8])
+    application_id: str = ""
+    company: str = ""
+    role: str = ""
+    interview_date: str = ""  # YYYY-MM-DD
+    interview_time: str = ""  # HH:MM
+    duration_minutes: int = 45
+    interview_type: str = "Video"  # Phone Screen / Video / Onsite / Take-home
+    notes: str = ""
+    calendar_exported: bool = False
+
+
 class JobPosting(BaseModel):
     """A job listing from the CSV dataset."""
     job_id: str = ""
@@ -200,3 +214,4 @@ class JobHunterState(TypedDict, total=False):
     kpi_metrics: dict           # Computed KPIs for the dashboard
     strategy_change_log: list   # Explainable history of approved strategy updates
     usefulness_ratings: list    # Candidate feedback on pattern-detection usefulness
+    interviews: list            # List of scheduled InterviewEvent dicts

@@ -23,14 +23,23 @@ def job_fetcher(state: dict) -> dict:
     csv_path = os.path.join(DATA_DIR, "jobs.csv")
     df = pd.read_csv(csv_path)
 
-    # Primary filter: match seniority
     # The new CSV uses 'formatted_experience_level' instead of 'seniority'
     if "formatted_experience_level" in df.columns:
         seniority_col = "formatted_experience_level"
     else:
         seniority_col = "seniority"
-        
-    filtered = df[df[seniority_col].str.strip().str.lower() == target_seniority.strip().lower()]
+
+    # Map target_seniority to dataset labels
+    target_sen = target_seniority.strip().lower()
+    allowed_labels = [target_sen]
+    if target_sen == "junior":
+        allowed_labels.extend(["entry level", "internship", "associate"])
+    elif target_sen == "mid-level":
+        allowed_labels.extend(["associate", "mid-senior level", "mid level"])
+    elif target_sen == "senior":
+        allowed_labels.extend(["mid-senior level", "director", "executive", "staff"])
+
+    filtered = df[df[seniority_col].str.strip().str.lower().isin(allowed_labels)]
 
     # If no matches (shouldn't happen with our dataset), fall back to all
     if filtered.empty:
@@ -85,10 +94,12 @@ def job_fetcher(state: dict) -> dict:
             "seniority": seniority_val,
             "description": row.get("description", ""),
             "required_skills": skills,
+            "location": str(row.get("location", "Remote")),
+            "work_type": str(row.get("formatted_work_type", "Full-time")),
+            "salary": str(row.get("normalized_salary", "Not listed")),
             "fit_score": 0.0,  # Will be computed by matcher
             "company_signals": _mock_signals(company_name)
         })
 
     return {"matched_jobs": jobs}
 
-    print('job_fetcher done')

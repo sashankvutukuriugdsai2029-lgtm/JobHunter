@@ -100,6 +100,7 @@ def run_agent(selected_key: str, profiles_data: dict):
         "kpi_metrics": prev.get("kpi_metrics", {}),
         "strategy_change_log": prev.get("strategy_change_log", []),
         "usefulness_ratings": prev.get("usefulness_ratings", []),
+        "interviews": prev.get("interviews", []),
     }
 
     thread_id = f"{selected_key}_{uuid.uuid4().hex[:8]}"
@@ -237,6 +238,45 @@ def render_overview(state: dict, profile: dict):
                 severity_icon = "🔴" if p.get("occurrences", 0) >= 5 else "🟠"
                 st.markdown(f'<div class="alert-box" style="padding:12px 14px;"><div style="font-size:13px; font-weight:600; color:#C4570A;">{severity_icon} {p.get("theme", "")} <span style="font-weight:400; color:#A89F95;">({p.get("occurrences", 0)}x)</span></div></div>', unsafe_allow_html=True)
 
+        # ── Upcoming Interviews ──────────────────────
+        interviews = state.get("interviews", []) or st.session_state.persistent_state.get("interviews", [])
+        if interviews:
+            from datetime import datetime as dt_cls
+            today = dt_cls.now().strftime("%Y-%m-%d")
+            upcoming = sorted(
+                [iv for iv in interviews if iv.get("interview_date", "") >= today],
+                key=lambda x: (x.get("interview_date", ""), x.get("interview_time", "")),
+            )[:3]
+
+            if upcoming:
+                st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+                st.markdown('<div class="direction-card" style="border-color:#6366F1;"><div class="direction-label">📅 Upcoming Interviews</div>', unsafe_allow_html=True)
+                for iv in upcoming:
+                    type_icon = {"Phone Screen": "📞", "Video": "💻", "Onsite": "🏢", "Take-home": "📝"}.get(iv.get("interview_type", ""), "📅")
+                    try:
+                        iv_date = dt_cls.strptime(iv["interview_date"], "%Y-%m-%d")
+                        days_until = (iv_date - dt_cls.now()).days
+                        if days_until == 0:
+                            countdown = "Today"
+                        elif days_until == 1:
+                            countdown = "Tomorrow"
+                        elif days_until > 0:
+                            countdown = f"in {days_until} days"
+                        else:
+                            countdown = "Past"
+                    except (ValueError, KeyError):
+                        countdown = ""
+
+                    st.markdown(
+                        f'<div style="background:#EEF2FF; border-radius:8px; padding:10px 12px; margin-top:8px;">'
+                        f'<div style="font-weight:600; font-size:13px; color:#4338CA;">{type_icon} {iv.get("role", "Role")} at {iv.get("company", "Company")}</div>'
+                        f'<div style="font-size:12px; color:#6366F1; margin-top:3px;">{iv.get("interview_date", "")} at {iv.get("interview_time", "")} · {iv.get("duration_minutes", 45)} min'
+                        f' <span style="background:#C7D2FE; padding:2px 8px; border-radius:10px; font-weight:600; font-size:11px;">{countdown}</span></div>'
+                        f'</div>',
+                        unsafe_allow_html=True,
+                    )
+                st.markdown('</div>', unsafe_allow_html=True)
+
 
 def render_agent_chat(profile: dict, state: dict):
     st.markdown('<div class="section-header">Agent Chat</div>', unsafe_allow_html=True)
@@ -245,7 +285,7 @@ def render_agent_chat(profile: dict, state: dict):
         unsafe_allow_html=True,
     )
 
-    if not os.environ.get("GOOGLE_API_KEY", "").strip():
+    if not os.environ.get("OPENROUTER_API_KEY", "").strip():
         st.markdown(
             """
             <div class="bento-card" style="text-align:center; padding:28px 24px; border-color:#F59E0B;">
@@ -254,7 +294,7 @@ def render_agent_chat(profile: dict, state: dict):
                     Backend LLM key missing
                 </div>
                 <div style="font-size:13px; color:#8C8278;">
-                    Set <code>GOOGLE_API_KEY</code> in your <code>.env</code> file and restart the app.
+                    Set <code>OPENROUTER_API_KEY</code> in your <code>.env</code> file and restart the app.
                 </div>
             </div>
             """,
@@ -375,7 +415,7 @@ with st.sidebar:
                         target_salary=create_salary,
                         additional_notes=create_notes,
                         uploaded_files=uploaded_files or [],
-                        gemini_api_key=os.environ.get("GOOGLE_API_KEY", ""),
+                        gemini_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
                     )
 
                 for warning in warnings:

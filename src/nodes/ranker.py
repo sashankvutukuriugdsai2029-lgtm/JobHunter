@@ -12,7 +12,7 @@ def ranker(state: dict) -> dict:
     # Sort descending by fit_score
     ranked = sorted(jobs, key=lambda j: j.get("fit_score", 0), reverse=True)
 
-    # Return top 10
-    top_jobs = ranked[:10]
+    # Return top 50 to give the UI a larger pool to filter from
+    top_jobs = ranked[:50]
 
     return {"matched_jobs": top_jobs}

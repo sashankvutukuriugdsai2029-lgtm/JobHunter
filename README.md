@@ -55,13 +55,13 @@ JobHunter acts as a persistent memory agent:
 - Demo profiles: `data/demo_profiles.json`
 - User-created profiles: `data/user_profiles.json`
 - Graph checkpoint/state: `checkpoints/jobhunter.db`
-- Env configuration: `.env` (including `GOOGLE_API_KEY`)
+- Env configuration: `.env` (including `OPENROUTER_API_KEY`)
 
 ## Running Locally
 1. Install dependencies:
    - `pip install -r requirements.txt`
 2. Add backend key to `.env`:
-   - `GOOGLE_API_KEY=...`
+   - `OPENROUTER_API_KEY=...`
 3. Start app:
    - `streamlit run app.py`
 

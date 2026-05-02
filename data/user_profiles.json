@@ -34,6 +34,88 @@
       },
       "target_salary": "",
       "notes": ""
+    },
+    "sashank_user": {
+      "name": "Sashank Vutukuri",
+      "base_skills": [
+        "Python",
+        "Pandas",
+        "Data Analysis",
+        "Statistical Analysis",
+        "n8n",
+        "Langflow",
+        "Google AI Studio",
+        "Tableau",
+        "Excel",
+        "Financial Statement Analysis",
+        "Linux",
+        "Fusion 360",
+        "SelfCAD",
+        "3D Design",
+        "Prototyping",
+        "Drone Engineering",
+        "Electronics",
+        "Physics Modeling",
+        "WhatsApp Automation",
+        "AI Automation"
+      ],
+      "target_role": "Data Scientist / AI Engineer / 3D Design & Drone Systems",
+      "years_experience": 0,
+      "target_salary": "",
+      "education": [
+        {
+          "school": "Masters\u2019 Union",
+          "degree": "Undergraduate Program in Data Science and Artificial Intelligence (2025\u20132029)"
+        },
+        {
+          "school": "Help Academy",
+          "degree": "Cambridge A Levels (3As, 1B \u2014 High Distinction) (2022\u20132024)"
+        },
+        {
+          "school": "Maz International School",
+          "degree": "Pearson Edexcel IGCSE (7A*) (2022)"
+        }
+      ],
+      "work_experience": [
+        {
+          "title": "Co Founder \u2013 Agribot",
+          "company": "Gurugram (Academic/Live Project)",
+          "description": "Identified digital literacy barriers for farmers accessing agricultural data; developed 'Agribot', an automated WhatsApp chatbot using n8n workflows to answer real-time queries on weather, soil health, and market prices."
+        },
+        {
+          "title": "Data Science Portfolio \u2013 Group Project",
+          "company": "Academic/Live Project",
+          "description": "Analyzed large datasets (Amazon Product Reviews, Fuel Efficiency Trends) using Python and Pandas to derive insights on consumer sentiment and energy consumption; conducted statistical analysis for Excitel Broadband to evaluate operational metrics and identify key performance drivers."
+        },
+        {
+          "title": "Drone Engineering Project \u2013 Group",
+          "company": "Academic/Live Project",
+          "description": "Designed and built a drone from scratch, applying principles of physics and electrical engineering; achieved stable flight and maneuverability."
+        },
+        {
+          "title": "Head Editor, Magazine Club",
+          "company": "Help Academy",
+          "description": "Led the editorial team to compile and publish the college magazine; streamlined proofreading and task assignment to ensure high-quality content delivery."
+        },
+        {
+          "title": "House Captain, Red Team",
+          "company": "Help Academy (Grade 11\u20132022)",
+          "description": "Led the house team to success in inter-house events; organized logistics and fostered team spirit."
+        },
+        {
+          "title": "School Prefect",
+          "company": "Maz International School (3 years)",
+          "description": "Developed discipline, leadership qualities, and a strong sense of responsibility."
+        }
+      ],
+      "notes": "",
+      "preferred_job_types": [
+        "Data Science",
+        "AI/ML Engineering",
+        "3D Design & Prototyping",
+        "Drone Systems",
+        "Automation & Workflow Engineering"
+      ]
     }
   },
   "default_strategies": {
@@ -44,6 +126,13 @@
         "React",
         "AWS"
       ],
+      "prep_recommendations": [],
+      "locked_changes": [],
+      "positive_events_since_last_change": 0
+    },
+    "sashank_user": {
+      "target_seniority": "Junior",
+      "focus_areas": [],
       "prep_recommendations": [],
       "locked_changes": [],
       "positive_events_since_last_change": 0

@@ -135,7 +135,7 @@ def render_applications_panel(state: dict):
                         <div class="job-title">{app.get('role_title', 'Unknown Role')}</div>
                         <div class="job-company">{app.get('company_name', 'Unknown Company')}</div>
                         <div style="font-size:12px; color:#A89F95; margin-top:4px;">
-                            Applied: {app.get('date_applied', 'N/A')} · ID: {app.get('job_id', 'N/A')[:8]}
+                            Applied: {app.get('date_applied', 'N/A')} · ID: {str(app.get('job_id', 'N/A'))[:8]}
                         </div>
                     </div>
                     <div>{render_status_badge(status)}</div>
@@ -212,6 +212,90 @@ def render_applications_panel(state: dict):
                         st.rerun()
                     else:
                         st.warning("Add feedback text before logging.")
+
+        # ── Interview Scheduler (appears for "interviewing" status) ──────
+        if status == "interviewing":
+            with st.expander("📅 Schedule Interview", expanded=False):
+                interviews = list(st.session_state.persistent_state.get("interviews", []))
+                existing_interviews = [iv for iv in interviews if iv.get("application_id") == app.get("job_id")]
+
+                if existing_interviews:
+                    for iv in existing_interviews:
+                        type_icon = {"Phone Screen": "📞", "Video": "💻", "Onsite": "🏢", "Take-home": "📝"}.get(iv.get("interview_type", ""), "📅")
+                        st.markdown(
+                            f'<div style="background:#F0FDF4; border-radius:10px; padding:12px 16px; margin-bottom:8px; border:1px solid #BBF7D0;">'
+                            f'<div style="font-weight:600; font-size:14px; color:#166534;">{type_icon} {iv.get("interview_type", "Interview")} — {iv.get("interview_date", "")} at {iv.get("interview_time", "")}</div>'
+                            f'<div style="font-size:12px; color:#15803D; margin-top:4px;">{iv.get("duration_minutes", 45)} min · {iv.get("notes", "No notes") or "No notes"}</div>'
+                            f'</div>',
+                            unsafe_allow_html=True,
+                        )
+                        # Re-download button
+                        from src.calendar_export import generate_ics, get_ics_filename
+                        ics_content = generate_ics(iv)
+                        st.download_button(
+                            "⬇️ Download .ics",
+                            data=ics_content,
+                            file_name=get_ics_filename(iv),
+                            mime="text/calendar",
+                            key=f"dl_ics_{iv.get('event_id', '')}_{i}",
+                        )
+
+                st.markdown("**Add a new interview:**")
+                ic1, ic2, ic3 = st.columns(3)
+                with ic1:
+                    int_date = st.date_input("Date", key=f"int_date_{app.get('job_id', i)}_{i}")
+                with ic2:
+                    from datetime import time as dt_time
+                    int_time = st.time_input("Time", value=dt_time(9, 0), key=f"int_time_{app.get('job_id', i)}_{i}")
+                with ic3:
+                    int_duration = st.selectbox("Duration", [30, 45, 60, 90], index=1, key=f"int_dur_{app.get('job_id', i)}_{i}")
+
+                ic4, ic5 = st.columns(2)
+                with ic4:
+                    int_type = st.selectbox(
+                        "Type",
+                        ["Phone Screen", "Video", "Onsite", "Take-home"],
+                        index=1,
+                        key=f"int_type_{app.get('job_id', i)}_{i}",
+                    )
+                with ic5:
+                    int_notes = st.text_input(
+                        "Notes",
+                        placeholder="Interviewer name, prep topics...",
+                        key=f"int_notes_{app.get('job_id', i)}_{i}",
+                    )
+
+                if st.button("📅 Add to Calendar", key=f"add_cal_{app.get('job_id', i)}_{i}", use_container_width=True):
+                    import uuid
+                    new_interview = {
+                        "event_id": str(uuid.uuid4())[:8],
+                        "application_id": app.get("job_id", ""),
+                        "company": app.get("company_name", ""),
+                        "role": app.get("role_title", ""),
+                        "interview_date": int_date.strftime("%Y-%m-%d"),
+                        "interview_time": int_time.strftime("%H:%M"),
+                        "duration_minutes": int_duration,
+                        "interview_type": int_type,
+                        "notes": int_notes,
+                        "calendar_exported": True,
+                    }
+
+                    interviews.append(new_interview)
+                    st.session_state.persistent_state["interviews"] = interviews
+
+                    # Generate and offer .ics download
+                    from src.calendar_export import generate_ics, get_ics_filename
+                    ics_content = generate_ics(new_interview)
+
+                    st.success(f"Interview scheduled! Download the .ics file below to add it to your calendar.")
+                    st.download_button(
+                        "⬇️ Download .ics file",
+                        data=ics_content,
+                        file_name=get_ics_filename(new_interview),
+                        mime="text/calendar",
+                        key=f"dl_new_ics_{new_interview['event_id']}_{i}",
+                    )
+                    st.rerun()
 
     feedback_log = state.get("feedback_log", [])
     if feedback_log:

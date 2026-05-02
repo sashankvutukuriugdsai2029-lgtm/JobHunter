@@ -19,6 +19,30 @@ def render_profile_panel(profile: dict, profile_key: str):
     </div>
     ''', unsafe_allow_html=True)
 
+    # CV Upload Section
+    with st.expander("📄 Auto-fill Profile from CV / Resume", expanded=False):
+        st.write("Upload your resume to automatically extract and populate your personal info, education, work experience, and skills.")
+        uploaded_cv = st.file_uploader("Upload CV", type=["pdf", "txt", "md"], label_visibility="collapsed")
+        
+        if uploaded_cv is not None:
+            if st.button("Parse & Update Profile", type="primary"):
+                with st.spinner("Extracting profile data using AI..."):
+                    from src.profile_builder import parse_cv_to_dict
+                    parsed_data = parse_cv_to_dict(uploaded_cv)
+                    if parsed_data:
+                        # Clean up data before saving
+                        if "name" in parsed_data and not parsed_data["name"]:
+                            del parsed_data["name"]
+                        save_profile_edits(profile_key, parsed_data)
+                        st.success("Profile updated! Please review your details below.")
+                        import time
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error("Failed to parse the CV. Check your Google API Key quota or try a different file format.")
+                        
+
+
     tab_personal, tab_edu, tab_work, tab_skills, tab_equal = st.tabs([
         "Personal", "Education", "Work Experience", "Skills", "Equal Employment"
     ])
