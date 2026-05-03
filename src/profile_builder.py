@@ -237,7 +237,7 @@ def create_or_update_user_profile(
     gemini_api_key: str = "",
 ) -> tuple[str, dict[str, Any], dict[str, Any], list[str]]:
     warnings: list[str] = []
-    effective_api_key = (gemini_api_key or os.environ.get("OPENROUTER_API_KEY", "")).strip()
+    effective_api_key = (gemini_api_key or os.environ.get("GLM_API_KEY", "")).strip()
 
     extracted_docs: list[str] = []
     for uploaded in uploaded_files:
@@ -349,7 +349,7 @@ def parse_cv_to_dict(uploaded_file: Any, api_key: str = "") -> dict[str, Any] | 
     if not text.strip():
         return None
         
-    effective_api_key = (api_key or os.environ.get("OPENROUTER_API_KEY", "")).strip()
+    effective_api_key = (api_key or os.environ.get("GLM_API_KEY", "")).strip()
     if not effective_api_key:
         return None
         

@@ -36,7 +36,7 @@ Max 250 words.
 
 def generate_resume_suggestions(job: dict, profile: dict) -> List[str]:
     """Generate 3 specific resume tailoring suggestions."""
-    api_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    api_key = os.environ.get("GLM_API_KEY", "").strip()
     if not api_key:
         return ["Error: No API key configured."]
 
@@ -65,7 +65,7 @@ Description: {job.get('description', '')[:1500]}
 
 def generate_cover_letter(job: dict, profile: dict) -> str:
     """Generate a 3-paragraph cover letter draft."""
-    api_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    api_key = os.environ.get("GLM_API_KEY", "").strip()
     if not api_key:
         return "Error: No API key configured."
 

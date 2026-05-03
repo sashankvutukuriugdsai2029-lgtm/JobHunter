@@ -20,6 +20,19 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 load_dotenv()
 
+# ── LangSmith Tracing ────────────────────────────────────
+# LangChain auto-detects these env vars and sends traces to LangSmith.
+# If LANGCHAIN_API_KEY is missing, tracing is silently disabled.
+_langsmith_key = os.environ.get("LANGCHAIN_API_KEY", "").strip()
+if _langsmith_key and _langsmith_key != "your-langsmith-api-key-here":
+    os.environ.setdefault("LANGCHAIN_TRACING_V2", "true")
+    os.environ.setdefault("LANGCHAIN_PROJECT", "jobhunter")
+    os.environ.setdefault("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com")
+    _langsmith_active = True
+else:
+    os.environ["LANGCHAIN_TRACING_V2"] = "false"
+    _langsmith_active = False
+
 from src.gmail_client import fetch_rejection_emails
 from src.graph import build_graph
 from src.chat_agent import ask_agent
@@ -285,7 +298,7 @@ def render_agent_chat(profile: dict, state: dict):
         unsafe_allow_html=True,
     )
 
-    if not os.environ.get("OPENROUTER_API_KEY", "").strip():
+    if not os.environ.get("GLM_API_KEY", "").strip():
         st.markdown(
             """
             <div class="bento-card" style="text-align:center; padding:28px 24px; border-color:#F59E0B;">
@@ -294,7 +307,7 @@ def render_agent_chat(profile: dict, state: dict):
                     Backend LLM key missing
                 </div>
                 <div style="font-size:13px; color:#8C8278;">
-                    Set <code>OPENROUTER_API_KEY</code> in your <code>.env</code> file and restart the app.
+                    Set <code>GLM_API_KEY</code> in your <code>.env</code> file and restart the app.
                 </div>
             </div>
             """,
@@ -415,7 +428,7 @@ with st.sidebar:
                         target_salary=create_salary,
                         additional_notes=create_notes,
                         uploaded_files=uploaded_files or [],
-                        gemini_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
+                        gemini_api_key=os.environ.get("GLM_API_KEY", ""),
                     )
 
                 for warning in warnings:
@@ -453,6 +466,12 @@ with st.sidebar:
     st.markdown(f'<div style="line-height:2;"><span class="workflow-dot {app_dot}"></span> Tracked applications: <strong>{apps_count}</strong></div>', unsafe_allow_html=True)
     st.markdown(f'<div style="line-height:2;"><span class="workflow-dot {"pending" if pending_apps > 0 else "active"}"></span> Pending new apps: <strong>{pending_apps}</strong></div>', unsafe_allow_html=True)
     st.markdown(f'<div style="line-height:2;"><span class="workflow-dot {fb_dot}"></span> Pending feedback: <strong>{pending_fb}</strong></div>', unsafe_allow_html=True)
+
+    # LangSmith tracing status
+    if _langsmith_active:
+        st.markdown('<div style="line-height:2;"><span class="workflow-dot active"></span> LangSmith: <strong>Tracing</strong></div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div style="line-height:2;"><span class="workflow-dot pending"></span> LangSmith: <strong>Off</strong></div>', unsafe_allow_html=True)
 
     st.markdown("---")
 

@@ -1,6 +1,6 @@
 """
 LLM chat helper for direct user-agent communication inside the app.
-Uses backend environment key only (OPENROUTER_API_KEY).
+Uses backend environment key only (GLM_API_KEY).
 """
 
 from __future__ import annotations
@@ -32,10 +32,10 @@ def _build_context(profile: dict[str, Any], state: dict[str, Any]) -> str:
 
 def ask_agent(message: str, profile: dict[str, Any], state: dict[str, Any]) -> str:
     """Generate assistant reply for in-app chat."""
-    api_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    api_key = os.environ.get("GLM_API_KEY", "").strip()
     if not api_key:
         return (
-            "Backend LLM key is not configured. Add OPENROUTER_API_KEY to .env on the server, "
+            "Backend LLM key is not configured. Add GLM_API_KEY to .env on the server, "
             "restart the app, and chat will work automatically."
         )
 
