@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-.env
-checkpoints/
-*.db
-token.json
-.streamlit/secrets.toml
-gemini-code-*.md
-claude_chat.txt
