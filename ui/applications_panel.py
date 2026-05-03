@@ -307,7 +307,7 @@ def render_applications_panel(state: dict):
                 <div class="strategy-item">
                     <strong>{fb.get('extracted_reason', 'Unknown reason')}</strong><br>
                     <span style="font-size:11px; color:#A89F95;">
-                        App: {fb.get('application_id', 'N/A')[:8]} · {fb.get('date_logged', '')}
+                        App: {str(fb.get('application_id', 'N/A'))[:8]} · {fb.get('date_logged', '')}
                     </span>
                 </div>
                 """,
